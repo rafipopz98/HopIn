@@ -1,15 +1,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hopin/screens/forgotpassword.dart';
+import 'package:hopin/screens/login_screen.dart';
 
 import 'package:hopin/screens/main_page.dart';
 import 'package:hopin/screens/register_screen.dart';
+import 'package:hopin/splashScreen/splash_screen.dart';
 import 'package:hopin/themeProvider/theme_provider.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: 'HopIn',
     options: FirebaseOptions(
       apiKey: "AIzaSyBpk3HxyarhOoJH8EFh3AZYo_iTYLF09s8",
       appId: "1:280856582634:android:326a126d8bfe347f057a93",
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
       theme: MyTheme.lightTheme,
       darkTheme: MyTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home: RegisterScreen(),
+      home: LoginScreen(),
     );
   }
 }

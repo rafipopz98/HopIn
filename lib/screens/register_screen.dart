@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hopin/global/global.dart';
+import 'package:hopin/screens/login_screen.dart';
 import 'package:hopin/screens/main_page.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -37,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         currentUser = auth.user;
 
         if (currentUser != null) {
-          Map userMap = { 
+          Map userMap = {
             "id": currentUser!.uid,
             "name": nameTextEditingController.text.trim(),
             "email": emailTextEditingController.text.trim(),
@@ -412,7 +413,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     width: 5,
                                   ),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (c) => LoginScreen()));
+                                    },
                                     child: Text(
                                       "Sign In",
                                       style: TextStyle(

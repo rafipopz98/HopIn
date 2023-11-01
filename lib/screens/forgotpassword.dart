@@ -3,47 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hopin/global/global.dart';
-import 'package:hopin/screens/forgotpassword.dart';
-import 'package:hopin/screens/main_page.dart';
-// import 'package:path/path.dart' as Path;
+import 'package:hopin/screens/register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   final emailTextEditingController = TextEditingController();
-  final passwordTextEditingController = TextEditingController();
-
   bool _isPassVisible = false;
 
   final _formKey = GlobalKey<FormState>();
 
   void _submit() async {
-    //validate all form fields
-    if (_formKey.currentState!.validate()) {
-      await firebaseAuth
-          .signInWithEmailAndPassword(
-              email: emailTextEditingController.text.trim(),
-              password: passwordTextEditingController.text.trim())
-          .then((auth) async {
-        currentUser = auth.user;
-
-        await Fluttertoast.showToast(msg: "Successfully Logged In!!");
-        // Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
-      }).catchError((ErrorMessage) {
-        Fluttertoast.showToast(msg: "Error Occured \n $ErrorMessage");
-      });
-    } else {
-      Fluttertoast.showToast(msg: "All Fields should be Valid");
-    }
+    firebaseAuth
+        .sendPasswordResetEmail(email: emailTextEditingController.text.trim())
+        .then((value) {
+      Fluttertoast.showToast(
+          msg: "Successfully sent Email to Recover Password");
+    }).onError((error, stackTrace) {
+      Fluttertoast.showToast(msg: "Error Occureed \n ${error.toString()}");
+    });
   }
 
   @override
@@ -67,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 20,
                 ),
                 Text(
-                  'Login',
+                  'Forgot Password',
                   style: TextStyle(
                     color: darkTheme ? Colors.white38 : Colors.black38,
                     fontSize: 25,
@@ -128,61 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               SizedBox(
                                 height: 20,
                               ),
-                              TextFormField(
-                                obscureText: !_isPassVisible,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(50)
-                                ],
-                                decoration: InputDecoration(
-                                    hintText: "Password",
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    filled: true,
-                                    fillColor: darkTheme
-                                        ? Colors.black45
-                                        : Colors.grey.shade200,
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(40),
-                                        borderSide: BorderSide(
-                                            width: 0, style: BorderStyle.none)),
-                                    prefixIcon: Icon(Icons.person,
-                                        color: darkTheme
-                                            ? Colors.amber.shade400
-                                            : Colors.grey),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                          _isPassVisible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: darkTheme
-                                              ? Colors.amber.shade400
-                                              : Colors.grey),
-                                      onPressed: () {
-                                        setState(() {
-                                          _isPassVisible = !_isPassVisible;
-                                        });
-                                      },
-                                    )),
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                validator: (text) {
-                                  if (text == null || text.isEmpty) {
-                                    return 'Password cannot be empty';
-                                  }
-                                  if (text.length < 6) {
-                                    return 'Please enter Valid Password';
-                                  }
-                                  if (text.length > 49) {
-                                    return 'Password Cannot be more than 49 characters';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (text) => setState(() {
-                                  passwordTextEditingController.text = text;
-                                }),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       primary: darkTheme
@@ -200,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _submit();
                                   },
                                   child: Text(
-                                    "Login",
+                                    "Send Reset Password link",
                                     style: TextStyle(
                                       fontSize: 20,
                                     ),
@@ -209,12 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height: 20,
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (c) => ForgotPassword()));
-                                },
+                                onTap: () {},
                                 child: Text(
                                   "Forgot Password?",
                                   style: TextStyle(
@@ -231,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Already have an Account?",
+                                    "Don't have an Account?",
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.grey),
                                   ),
@@ -243,10 +166,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (c) => LoginScreen()));
+                                              builder: (c) =>
+                                                  RegisterScreen()));
                                     },
                                     child: Text(
-                                      "Sign In",
+                                      "Sign Up",
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: darkTheme
