@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as lol;
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart';
 
@@ -70,9 +71,9 @@ class _MainScreenState extends State<MainScreen> {
               polylines: polyLineSet,
               markers: markerSet,
               circles: circleSet,
-              onMapCreated: (GoogleMapController controller) {
-                _controllerGoogleMap.complete(controller);
-              },
+              // onMapCreated: (lol.GoogleMapController controller) {
+                // _controllerGoogleMap.complete(controller);
+              // },
             )
           ],
         ),
