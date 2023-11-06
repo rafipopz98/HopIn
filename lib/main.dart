@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hopin/infoHandler/app_info.dart';
 import 'package:hopin/screens/forgotpassword.dart';
 import 'package:hopin/screens/login_screen.dart';
 
@@ -7,6 +8,7 @@ import 'package:hopin/screens/main_page.dart';
 import 'package:hopin/screens/register_screen.dart';
 import 'package:hopin/splashScreen/splash_screen.dart';
 import 'package:hopin/themeProvider/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
@@ -30,13 +32,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.r
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      themeMode: ThemeMode.system,
-      theme: MyTheme.lightTheme,
-      darkTheme: MyTheme.darkTheme,
-      debugShowCheckedModeBanner: false,
-      home: MainScreen(),
+    return ChangeNotifierProvider(
+      create: (context) => AppInfo(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        themeMode: ThemeMode.system,
+        theme: MyTheme.lightTheme,
+        darkTheme: MyTheme.darkTheme,
+        debugShowCheckedModeBanner: false,
+        home: MainScreen(),
+      ),
     );
   }
 }
