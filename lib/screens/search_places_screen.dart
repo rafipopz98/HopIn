@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hopin/Assistant/request_assistan.dart';
 import 'package:hopin/Model/predicted_places.dart';
+import 'package:hopin/global/map_key.dart';
+import 'package:hopin/widgets/place_prediction_tile.dart';
 
 class SearchPlacesScreen extends StatefulWidget {
   const SearchPlacesScreen({super.key});
@@ -9,10 +12,33 @@ class SearchPlacesScreen extends StatefulWidget {
 }
 
 class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
+  List<PredictedPlaces> placesPredictionList = [];
 
-List<PredictedPlaces> placesPredictionList=[];
+  findPlaceAutoCompleteSearch(String inputText) async {
+    if (inputText.length > 1) {
+      String urlAutocompleteSearch =
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$inputText&key=$mapKey&components=country:IN";
 
-  findPlaceAutoCompleteSearch(value) {}
+      var responseAutoCompleteSearch =
+          await RequstAssistant.recieveRequest(urlAutocompleteSearch);
+
+      if (responseAutoCompleteSearch == "Error Occured,Failed,No Response") {
+        return;
+      }
+      if (responseAutoCompleteSearch["status"] == "OK") {
+        var placePredictions = responseAutoCompleteSearch["predictions"];
+
+        var placePredictionsList = (placePredictions as List)
+            .map((jsonData) => PredictedPlaces.fromJson(jsonData))
+            .toList();
+
+        setState(() {
+          placesPredictionList = placesPredictionList;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool darkTheme =
@@ -93,17 +119,27 @@ List<PredictedPlaces> placesPredictionList=[];
 
               //display place prediction results
 
-              (placesPredictionList.length>0)
-              ?Expanded(
-                child: ListView.separated(
-                  itemCount: placesPredictionList.length,
-                  physics: ClampingScrollPhysics(),
-                  itemBuilder: (context,index){
-                return
-              },
-              separatorBuilder: separateV,
-              ),
-              )
+              (placesPredictionList.length > 0)
+                  ? Expanded(
+                      child: ListView.separated(
+                        itemCount: placesPredictionList.length,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return PlacePredictionTileDesign(
+                            predictedPlaces: placesPredictionList[index],
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 0,
+                            color:
+                                darkTheme ? Colors.amber.shade400 : Colors.blue,
+                            thickness: 0,
+                          );
+                        },
+                      ),
+                    )
+                  : Container()
             ],
           ),
         ));

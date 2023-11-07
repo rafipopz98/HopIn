@@ -6,6 +6,7 @@ import 'package:hopin/Model/directions.dart';
 import 'package:hopin/global/global.dart';
 import 'package:hopin/global/map_key.dart';
 import 'package:hopin/infoHandler/app_info.dart';
+import 'package:hopin/screens/search_places_screen.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as lol;
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart';
@@ -253,7 +254,15 @@ class _MainScreenState extends State<MainScreen> {
                                   Padding(
                                     padding: EdgeInsets.all(5),
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: ()async {
+                                        //search scrrreeen
+                                        var responseFromSearchScreen=await Navigator.push(context,MaterialPageRoute(builder: (c)=>SearchPlacesScreen()));
+                                        if(responseFromSearchScreen=="ObtainedDropOff"){
+                                          setState(() {
+                                            // openNavigationDrawer=false;
+                                          });
+                                        }
+                                      },
                                       child: Row(children: [
                                         Icon(Icons.location_on_outlined,
                                             color: darkTheme
