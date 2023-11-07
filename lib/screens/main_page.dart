@@ -254,10 +254,16 @@ class _MainScreenState extends State<MainScreen> {
                                   Padding(
                                     padding: EdgeInsets.all(5),
                                     child: GestureDetector(
-                                      onTap: ()async {
+                                      onTap: () async {
                                         //search scrrreeen
-                                        var responseFromSearchScreen=await Navigator.push(context,MaterialPageRoute(builder: (c)=>SearchPlacesScreen()));
-                                        if(responseFromSearchScreen=="ObtainedDropOff"){
+                                        var responseFromSearchScreen =
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (c) =>
+                                                        SearchPlacesScreen()));
+                                        if (responseFromSearchScreen ==
+                                            "ObtainedDropOff") {
                                           setState(() {
                                             // openNavigationDrawer=false;
                                           });
@@ -289,12 +295,10 @@ class _MainScreenState extends State<MainScreen> {
                                               Provider.of<AppInfo>(context)
                                                           .userDropOffLocation !=
                                                       null
-                                                  ? (Provider.of<AppInfo>(
-                                                                  context)
-                                                              .userDropOffLocation!
-                                                              .locationName!)
-                                                          .substring(0, 24) +
-                                                      "..."
+                                                  ? Provider.of<AppInfo>(
+                                                          context)
+                                                      .userDropOffLocation!
+                                                      .locationName!
                                                   : "Destination Address",
                                               style: TextStyle(
                                                   color: Colors.grey,
