@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hopin/Assistant/assistant_method.dart';
@@ -7,6 +8,7 @@ import 'package:hopin/global/global.dart';
 import 'package:hopin/global/map_key.dart';
 import 'package:hopin/infoHandler/app_info.dart';
 import 'package:hopin/screens/search_places_screen.dart';
+import 'package:hopin/widgets/progress_dialog.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as lol;
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart';
@@ -81,6 +83,117 @@ class _MainScreenState extends State<MainScreen> {
 
     userName = userModelCurrentInfo!.name;
     userEmail = userModelCurrentInfo!.email;
+  }
+
+  Future<void> drawPolylineFromOriginToDestination(bool darkTheme) async {
+    var originPosition =
+        Provider.of<AppInfo>(context, listen: false).userPickUpLocation;
+    var destinationPosition =
+        Provider.of<AppInfo>(context, listen: false).userDropOffLocation;
+
+    var originLatlng = LatLng(
+        originPosition!.locationLatitude!, originPosition!.locationLongitude!);
+    var destinationLatlng = LatLng(destinationPosition!.locationLatitude!,
+        destinationPosition!.locationLongitude!);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => ProgressDialog(
+        message: "Please wait...",
+      ),
+    );
+
+    var directionsDetailsInfo =
+        await AssistantMethods.ObtainedOriginToDestinationDirectionDetails(
+            originLatlng, destinationLatlng);
+    setState(() {
+      tripDirectionDetailsInfo = directionsDetailsInfo;
+    });
+
+    Navigator.pop(context);
+
+    PolylinePoints pPoints = PolylinePoints();
+    List<PointLatLng> decodePolylinePointsResultList =
+        pPoints.decodePolyline(directionsDetailsInfo.e_points!);
+    pLineCordinateList.clear();
+    if (decodePolylinePointsResultList.isNotEmpty) {
+      decodePolylinePointsResultList.forEach((PointLatLng pointLatLng) {
+        pLineCordinateList
+            .add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
+      });
+    }
+    polyLineSet.clear();
+    setState(() {
+      Polyline polyline = Polyline(
+        color: darkTheme ? Colors.amberAccent : Colors.blue,
+        polylineId: PolylineId("PolylineID"),
+        jointType: JointType.round,
+        points: pLineCordinateList,
+        startCap: Cap.roundCap,
+        geodesic: true,
+        width: 5,
+      );
+      polyLineSet.add(polyline);
+    });
+    LatLngBounds boundsLatlng;
+    if (originLatlng.latitude > destinationLatlng.latitude &&
+        originLatlng.longitude > destinationLatlng.longitude) {
+      boundsLatlng =
+          LatLngBounds(southwest: destinationLatlng, northeast: originLatlng);
+    } else if (originLatlng.longitude > destinationLatlng.longitude) {
+      boundsLatlng = LatLngBounds(
+          southwest: LatLng(originLatlng.latitude, destinationLatlng.longitude),
+          northeast:
+              LatLng(destinationLatlng.latitude, originLatlng.longitude));
+    } else if (originLatlng.latitude > destinationLatlng.latitude) {
+      boundsLatlng = LatLngBounds(
+          southwest: LatLng(destinationLatlng.latitude, originLatlng.longitude),
+          northeast:
+              LatLng(originLatlng.latitude, destinationLatlng.longitude));
+    } else {
+      boundsLatlng =
+          LatLngBounds(southwest: originLatlng, northeast: destinationLatlng);
+    }
+
+    newGoogleMapControler!
+        .animateCamera(CameraUpdate.newLatLngBounds(boundsLatlng, 65));
+
+    Marker originMarker = Marker(
+      markerId: MarkerId("originID"),
+      infoWindow:
+          InfoWindow(title: originPosition.locationName, snippet: "Origin"),
+      position: originLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    Marker destinationMarker = Marker(
+      markerId: MarkerId("destinationID"),
+      infoWindow: InfoWindow(
+          title: destinationPosition.locationName, snippet: "Destination"),
+      position: destinationLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    setState(() {
+      markerSet.add(originMarker);
+      markerSet.add(destinationMarker);
+    });
+    Circle originCircle = Circle(
+        circleId: CircleId("originID"),
+        fillColor: Colors.green,
+        radius: 12,
+        strokeWidth: 3,
+        strokeColor: Colors.white,
+        center: originLatlng);
+    Circle destinationCircle = Circle(
+        circleId: CircleId("destinationID"),
+        fillColor: Colors.red,
+        radius: 12,
+        strokeWidth: 3,
+        strokeColor: Colors.white,
+        center: destinationLatlng);
+    setState(() {
+      circleSet.add(originCircle);
+      circleSet.add(destinationCircle);
+    });
   }
 
   getAddressFromLatlng() async {
@@ -268,6 +381,8 @@ class _MainScreenState extends State<MainScreen> {
                                             // openNavigationDrawer=false;
                                           });
                                         }
+                                        await drawPolylineFromOriginToDestination(
+                                            darkTheme);
                                       },
                                       child: Row(children: [
                                         Icon(Icons.location_on_outlined,
