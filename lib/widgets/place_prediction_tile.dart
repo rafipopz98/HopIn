@@ -53,8 +53,8 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
         userDropOffAddress = directions.locationName!;
       });
       Navigator.pop(context, "ObtainedDropOff");
-    }
-  }
+    } 
+  } 
 
   @override
   Widget build(BuildContext context) {
