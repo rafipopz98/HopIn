@@ -7,6 +7,7 @@ import 'package:hopin/Model/directions.dart';
 import 'package:hopin/global/global.dart';
 import 'package:hopin/global/map_key.dart';
 import 'package:hopin/infoHandler/app_info.dart';
+import 'package:hopin/screens/precise_pickup_location.dart';
 import 'package:hopin/screens/search_places_screen.dart';
 import 'package:hopin/widgets/progress_dialog.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as lol;
@@ -196,26 +197,26 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  getAddressFromLatlng() async {
-    try {
-      GeoData data = await Geocoder2.getDataFromCoordinates(
-          latitude: pickLocation!.latitude,
-          longitude: pickLocation!.longitude,
-          googleMapApiKey: mapKey);
-      setState(() {
-        Directions userPickUpAddress = Directions();
-        userPickUpAddress.locationLatitude = pickLocation!.latitude;
-        userPickUpAddress.locationLongitude = pickLocation!.longitude;
-        userPickUpAddress.locationName = data.address;
-        // _address = data.address;
+  // getAddressFromLatlng() async {
+  //   try {
+  //     GeoData data = await Geocoder2.getDataFromCoordinates(
+  //         latitude: pickLocation!.latitude,
+  //         longitude: pickLocation!.longitude,
+  //         googleMapApiKey: mapKey);
+  //     setState(() {
+  //       Directions userPickUpAddress = Directions();
+  //       userPickUpAddress.locationLatitude = pickLocation!.latitude;
+  //       userPickUpAddress.locationLongitude = pickLocation!.longitude;
+  //       userPickUpAddress.locationName = data.address;
+  //       // _address = data.address;
 
-        Provider.of<AppInfo>(context, listen: false)
-            .updatePickUpLocationAddress(userPickUpAddress);
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
+  //       Provider.of<AppInfo>(context, listen: false)
+  //           .updatePickUpLocationAddress(userPickUpAddress);
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
@@ -259,28 +260,28 @@ class _MainScreenState extends State<MainScreen> {
                 setState(() {});
                 locateUserPosition();
               },
-              onCameraMove: (CameraPosition? position) {
-                if (pickLocation != position!.target) {
-                  setState(() {
-                    pickLocation = position.target;
-                  });
-                }
-              },
-              onCameraIdle: () {
-                getAddressFromLatlng();
-              },
+              // onCameraMove: (CameraPosition? position) {
+              //   if (pickLocation != position!.target) {
+              //     setState(() {
+              //       pickLocation = position.target;
+              //     });
+              //   }
+              // },
+              // onCameraIdle: () {
+              //   getAddressFromLatlng();
+              // },
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 35.0),
-                child: Image.asset(
-                  'images/pick.jpg',
-                  height: 45,
-                  width: 45,
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.center,
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(bottom: 35.0),
+            //     child: Image.asset(
+            //       'images/pick.jpg',
+            //       height: 45,
+            //       width: 45,
+            //     ),
+            //   ),
+            // ),
 
             Positioned(
               bottom: 0,
@@ -427,6 +428,54 @@ class _MainScreenState extends State<MainScreen> {
                                     ),
                                   )
                                 ]),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        "Change Pick Up",
+                                        style: TextStyle(
+                                            color: darkTheme
+                                                ? Colors.black
+                                                : Colors.white),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: darkTheme
+                                              ? Colors.amber.shade400
+                                              : Colors.blue,
+                                          textStyle: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16))),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (c) =>
+                                                    precisePickupLocation()));
+                                      },
+                                      child: Text(
+                                        "Request a Ride",
+                                        style: TextStyle(
+                                            color: darkTheme
+                                                ? Colors.black
+                                                : Colors.white),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: darkTheme
+                                              ? Colors.amber.shade400
+                                              : Colors.blue,
+                                          textStyle: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)))
+                                ],
                               )
                             ],
                           ),
