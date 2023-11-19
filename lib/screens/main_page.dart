@@ -483,29 +483,29 @@ class _MainScreenState extends State<MainScreen> {
                       ])),
             )
 
-            Positioned(
-              top: 40,
-              right: 20,
-              left: 20,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  color: Colors.white,
-                ),
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  Provider.of<AppInfo>(context).userPickUpLocation != null
-                      ? (Provider.of<AppInfo>(context)
-                                  .userPickUpLocation!
-                                  .locationName!)
-                              .substring(0, 24) +
-                          "..."
-                      : "Not Getting Address",
-                  overflow: TextOverflow.visible,
-                  softWrap: true,
-                ),
-              ),
-            )
+            // Positioned(
+            //   top: 40,
+            //   right: 20,
+            //   left: 20,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       border: Border.all(color: Colors.black),
+            //       color: Colors.white,
+            //     ),
+            //     padding: EdgeInsets.all(20),
+            //     child: Text(
+            //       Provider.of<AppInfo>(context).userPickUpLocation != null
+            //           ? (Provider.of<AppInfo>(context)
+            //                       .userPickUpLocation!
+            //                       .locationName!)
+            //                   .substring(0, 24) +
+            //               "..."
+            //           : "Not Getting Address",
+            //       overflow: TextOverflow.visible,
+            //       softWrap: true,
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
